@@ -20,7 +20,7 @@ The script supports both Unix-based systems and Windows by dynamically detecting
 
 
 
-##How It Works
+## How It Works
 
 The program modifies the system's hosts file by adding entries that redirect selected domains (e.g., facebook.com) to 127.0.0.1. This prevents the browser from reaching the actual website.
 
