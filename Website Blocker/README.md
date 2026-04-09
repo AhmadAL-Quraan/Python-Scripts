@@ -39,31 +39,27 @@ Administrator/root privileges (required to modify the hosts file)
 
 ## Usage
 
+
 1. Run the script
 
 On Linux/macOS:
-
 ```bash
 sudo python3 web_blocker.py
 ```
 
 On Windows (run terminal as Administrator):
-
 ```bash
 python web_blocker.py
 ```
 
 
 2. Select websites
-
 You will be prompted to:
-
 * Choose from a list of common websites
 * Or enter custom domains
 
 
 3. Set working hours
-
 Enter:
 * Start hour (0–23)
 * End hour (0–23)
@@ -75,18 +71,16 @@ If invalid input is provided, default values (8–16) will be used.
 ## Example
 
 If you select:
-
 * facebook.com
 * youtube.com
 
 The script will add entries like:
-
 ```bash
 127.0.0.1 facebook.com
 127.0.0.1 www.facebook.com
 ```
 
-Important Notes
+## Important Notes
 * The script must be run with administrator/root privileges.
 * Modifying the hosts file affects system-wide network behavior.
 * The program automatically restores the hosts file when it is stopped using Ctrl+C.
