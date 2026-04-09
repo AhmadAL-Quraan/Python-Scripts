@@ -1,17 +1,91 @@
 # Description
-This is real world program which blocks certain distracting website like Facebook,
-Youtube etc during your work hours. About the program : What we are going to in this 
-program is that we will pass the link of websites which you think is distracting and the
-time that you are working on your computer and program will block those website.
 
->Program Architecture: 
-Every system have host file whether it is Mac, Windows or Linux.
- 1. for mac: Host file in Mac and Linux : "/etc/hosts"\
-2. for windows:-
-C:\Windows\System32\drivers\etc\hosts
+Website Blocker
+Overview
 
-## Usage
-Insert working hours, and blacklisted websties in the script. The run:
+This project is a Python-based website blocker that restricts access to selected websites during specified working hours. It modifies the system's hosts file to redirect targeted domains to the local machine, effectively preventing access.
 
-> python web_blocker.py
+The script supports both Unix-based systems and Windows by dynamically detecting the operating system and selecting the appropriate hosts file.
 
+Features
+Cross-platform support (Linux, macOS, Windows)
+Time-based website blocking
+Interactive selection of popular websites
+Support for custom user-defined domains
+Automatic cleanup of hosts file on exit
+Error handling for insufficient permissions
+Modular, object-oriented design
+How It Works
+
+The program modifies the system's hosts file by adding entries that redirect selected domains (e.g., facebook.com) to 127.0.0.1. This prevents the browser from reaching the actual website.
+
+During non-working hours, the script restores the hosts file by removing those entries.
+
+Requirements
+Python 3.x
+Administrator/root privileges (required to modify the hosts file)
+Usage
+1. Run the script
+
+On Linux/macOS:
+
+sudo python3 web_blocker.py
+
+On Windows (run terminal as Administrator):
+
+python web_blocker.py
+2. Select websites
+
+You will be prompted to:
+
+Choose from a list of common websites
+Or enter custom domains
+3. Set working hours
+
+Enter:
+
+Start hour (0–23)
+End hour (0–23)
+
+If invalid input is provided, default values (8–16) will be used.
+
+Example
+
+If you select:
+
+facebook.com
+youtube.com
+
+The script will add entries like:
+
+127.0.0.1 facebook.com
+127.0.0.1 www.facebook.com
+Important Notes
+The script must be run with administrator/root privileges.
+Modifying the hosts file affects system-wide network behavior.
+The program automatically restores the hosts file when it is stopped using Ctrl+C.
+Project Structure
+Website Blocker/
+│
+├── cross-platform/
+│   └── web_blocker.py
+│
+├── mac/
+│   └── Website_Blocker.py
+│
+└── README.md
+Improvements Over Original Implementation
+Refactored into an object-oriented design
+Added cross-platform compatibility
+Introduced interactive user input
+Improved timing responsiveness
+Added safe cleanup on exit
+Improved error handling and reliability
+Future Improvements
+Command-line arguments support
+Configuration file for persistent settings
+Logging system
+Unit testing
+License
+
+This project is part of a public repository intended for educational and practical use.
