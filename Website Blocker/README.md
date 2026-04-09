@@ -26,8 +26,10 @@ The program modifies the system's hosts file by adding entries that redirect sel
 
 During non-working hours, the script restores the hosts file by removing those entries.
 
+This could be very useful for system administrators, parents, or anyone looking to improve productivity by limiting access to distracting websites during certain hours.
 
-![simple-class-diagram](pictures/class-diagram.png)
+
+![simple-diagram](pictures/class-diagram.png)
 
 
 
@@ -74,7 +76,7 @@ If you select:
 * facebook.com
 * youtube.com
 
-The script will add entries like:
+The script will add entries like to the hosts file:
 ```bash
 127.0.0.1 facebook.com
 127.0.0.1 www.facebook.com
