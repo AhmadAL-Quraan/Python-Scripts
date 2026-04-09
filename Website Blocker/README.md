@@ -1,7 +1,7 @@
 # Website Blocker
 
 
-##Overview
+## Overview
 
 This project is a Python-based website blocker that restricts access to selected websites during specified working hours. It modifies the system's hosts file to redirect targeted domains to the local machine, effectively preventing access.
 
