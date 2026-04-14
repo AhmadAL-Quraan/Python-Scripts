@@ -54,7 +54,8 @@ class WebsiteBlocker:
     # Unblocking logic
     # ----------------------------
     def unblock_websites(self) -> None:
-        with open(self.hosts_path, "r+") as file:
+        try:
+         with open(self.hosts_path, "r+") as file:
             lines = file.readlines()
             file.seek(0)
 
@@ -64,7 +65,9 @@ class WebsiteBlocker:
 
             file.truncate()
 
-    # ----------------------------
+        except PermissionError:
+         print("\033[91m❌ Please run the script as administrator/root\033[0m")
+        sys.exit(1)    # ----------------------------
     # Cleanup on exit
     # ----------------------------
     def cleanup(self, signum=None, frame=None) -> None:
@@ -76,28 +79,37 @@ class WebsiteBlocker:
     # Main loop (FIXED)
     # ----------------------------
     def run(self) -> None:
-        print("\033[92m🚀 Website Blocker running...\033[0m")
+     print("\033[92m🚀 Website Blocker running...\033[0m")
 
-        signal.signal(signal.SIGINT, self.cleanup)
+     signal.signal(signal.SIGINT, self.cleanup)
 
-        while True:
-            should_block = self.is_working_hours()
+    # 👇 INITIAL CHECK (this is what you need)
+     if self.is_working_hours():
+        print("\033[91m🔒 Blocking websites...\033[0m")
+        self.block_websites()
+        self.is_blocked = True
+     else:
+        print("\033[92m🔓 Unblocking websites...\033[0m")
+        print("\033[93m⏰ Outside of working hours.\033[0m")
+        self.unblock_websites()
+        self.is_blocked = False
 
-            # Only act when state changes
-            if should_block and not self.is_blocked:
-                print("\033[91m🔒 Blocking websites...\033[0m")
-                self.block_websites()
-                self.is_blocked = True
+    # 🔁 Loop continues as before
+     while True:
+        should_block = self.is_working_hours()
 
-            elif not should_block and self.is_blocked:
-                print("\033[92m🔓 Unblocking websites...\033[0m")
-                print("\033[93m⏰ Outside of\
-working hours. Websites are accessible.\033[0m")
-                self.unblock_websites()
-                self.is_blocked = False
+        if should_block and not self.is_blocked:
+            print("\033[91m🔒 Blocking websites...\033[0m")
+            self.block_websites()
+            self.is_blocked = True
 
-            time.sleep(30)
+        elif not should_block and self.is_blocked:
+            print("\033[92m🔓 Unblocking websites...\033[0m")
+            print("\033[93m⏰ Outside of working hours.\033[0m")
+            self.unblock_websites()
+            self.is_blocked = False
 
+        time.sleep(60)
 
 # ----------------------------
 # User input for websites
