@@ -2,6 +2,7 @@ import time
 import platform
 import signal
 import sys
+import os
 from datetime import datetime
 
 
@@ -25,6 +26,22 @@ class WebsiteBlocker:
         return "/etc/hosts"
 
     # ----------------------------
+    # Admin check (IMPORTANT)
+    # ----------------------------
+    def check_admin(self) -> None:
+        try:
+            if platform.system() == "Windows":
+                import ctypes
+                if not ctypes.windll.shell32.IsUserAnAdmin():
+                    raise PermissionError
+            else:
+                if os.geteuid() != 0:
+                    raise PermissionError
+        except Exception:
+            print("\033[91m❌ Please run the script as administrator/root\033[0m")
+            sys.exit(1)
+
+    # ----------------------------
     # Time logic
     # ----------------------------
     def is_working_hours(self) -> bool:
@@ -45,74 +62,96 @@ class WebsiteBlocker:
                         file.write(entry + "\n")
 
         except PermissionError:
-            print(
-                "\033[91m❌ Please run the script as administrator/root\033[0m"
-            )
-            sys.exit(1)
+            self.admin_error()
 
     # ----------------------------
     # Unblocking logic
     # ----------------------------
     def unblock_websites(self) -> None:
         try:
-         with open(self.hosts_path, "r+") as file:
-            lines = file.readlines()
-            file.seek(0)
+            with open(self.hosts_path, "r+") as file:
+                lines = file.readlines()
+                file.seek(0)
 
-            for line in lines:
-                if not any(site in line for site in self.websites):
-                    file.write(line)
+                for line in lines:
+                    if not any(site in line for site in self.websites):
+                        file.write(line)
 
-            file.truncate()
+                file.truncate()
 
         except PermissionError:
-         print("\033[91m❌ Please run the script as administrator/root\033[0m")
-        sys.exit(1)    # ----------------------------
-    # Cleanup on exit
+            self.admin_error()
+
+    # ----------------------------
+    # Error helpers
+    # ----------------------------
+    def admin_error(self):
+        print("\033[91m❌ Permission denied. Run as admin/root.\033[0m")
+        sys.exit(1)
+
+    # ----------------------------
+    # Cleanup on exit (Ctrl + C)
     # ----------------------------
     def cleanup(self, signum=None, frame=None) -> None:
-        print("\n\033[96m🧹 Cleaning up hosts file...\033[0m")
-        self.unblock_websites()
+        print("\n\033[96m🧹 Cleaning up hosts file before exit...\033[0m")
+        try:
+            self.unblock_websites()
+        except Exception:
+            pass
+        print("\033[92m✅ Cleanup done. Exiting safely.\033[0m")
         sys.exit(0)
 
     # ----------------------------
-    # Main loop (FIXED)
+    # Main loop
     # ----------------------------
     def run(self) -> None:
-     print("\033[92m🚀 Website Blocker running...\033[0m")
+        print("\033[92m🚀 Website Blocker running...\033[0m")
 
-     signal.signal(signal.SIGINT, self.cleanup)
+        # ✔ Ensure admin FIRST
+        self.check_admin()
 
-    # 👇 INITIAL CHECK (this is what you need)
-     if self.is_working_hours():
-        print("\033[91m🔒 Blocking websites...\033[0m")
-        self.block_websites()
-        self.is_blocked = True
-     else:
-        print("\033[92m🔓 Unblocking websites...\033[0m")
-        print("\033[93m⏰ Outside of working hours.\033[0m")
-        self.unblock_websites()
-        self.is_blocked = False
+        # ✔ Handle Ctrl + C
+        signal.signal(signal.SIGINT, self.cleanup)
 
-    # 🔁 Loop continues as before
-     while True:
-        should_block = self.is_working_hours()
-
-        if should_block and not self.is_blocked:
+        # ✔ Initial state (print ONCE)
+        if self.is_working_hours():
             print("\033[91m🔒 Blocking websites...\033[0m")
             self.block_websites()
             self.is_blocked = True
-
-        elif not should_block and self.is_blocked:
+        else:
             print("\033[92m🔓 Unblocking websites...\033[0m")
             print("\033[93m⏰ Outside of working hours.\033[0m")
             self.unblock_websites()
             self.is_blocked = False
 
-        time.sleep(60)
+        # ✔ Loop (ONLY reacts to change)
+        while True:
+            try:
+                should_block = self.is_working_hours()
+
+                if should_block and not self.is_blocked:
+                    print("\033[91m🔒 Blocking websites...\033[0m")
+                    self.block_websites()
+                    self.is_blocked = True
+
+                elif not should_block and self.is_blocked:
+                    print("\033[92m🔓 Unblocking websites...\033[0m")
+                    print("\033[93m⏰ Outside of working hours.\033[0m")
+                    self.unblock_websites()
+                    self.is_blocked = False
+
+                time.sleep(60)
+
+            except KeyboardInterrupt:
+                self.cleanup()
+
+            except Exception as e:
+                print(f"\033[91m⚠️ Unexpected error: {e}\033[0m")
+                time.sleep(5)
+
 
 # ----------------------------
-# User input for websites
+# User input
 # ----------------------------
 def get_user_websites() -> list[str]:
     options = {
@@ -149,7 +188,7 @@ def get_user_websites() -> list[str]:
                     selected.append("www." + site)
 
         else:
-            print(f"\n\033[91mInvalid option: {choice}\033[0m")
+            print(f"\033[91mInvalid option: {choice}\033[0m")
             return []
 
     return selected
@@ -160,20 +199,19 @@ def get_user_websites() -> list[str]:
 # ----------------------------
 if __name__ == "__main__":
 
-    print("\n\033[33m⚠️ Run\
- this script as administrator/root for it to work properly.\033[0m\n")
+    print("\n\033[33m⚠️ Run this script as administrator/root.\033[0m\n")
 
     websites: list[str] = []
-    while len(websites) == 0:
+    while not websites:
         websites = get_user_websites()
-
-    if not websites:
-        print("\033[91mNo websites selected. Exiting.\033[0m")
-        sys.exit(0)
 
     try:
         start = int(input("Enter start hour (0-23) [default 8]: ") or 8)
         end = int(input("Enter end hour (0-23) [default 16]: ") or 16)
+
+        if not (0 <= start <= 23 and 0 <= end <= 23):
+            raise ValueError
+
     except ValueError:
         print("\033[91mInvalid input. Using default (8-16).\033[0m")
         start, end = 8, 16

@@ -112,6 +112,99 @@ The script will add entries like to the hosts file:
 
 * Instead of the program print even if nothing changed, the program remembers its state and It only acts when something actually changes.
 
+
+
+1.  Admin / Root Check (Early Exit)
+
+* Added a `check_admin()` function.
+* Script now **verifies permissions before doing anything**.
+* If not run as admin/root → exits immediately with a clear message.
+
+
+2.  State-Based Execution (No Spam)
+
+* Introduced `self.is_blocked` as a state flag.
+* Script now:
+
+  * ✅ Prints **only when state changes**
+  * ❌ No repeated "Blocking..." / "Unblocking..." messages
+* Behavior is now **event-driven**, not repetitive polling output.
+
+
+3.  Initial State Synchronization
+
+* On startup, script immediately:
+
+  * Checks current time
+  * Applies correct state (block/unblock)
+  * Prints status **once**
+
+
+4.  Safe Cleanup on Exit (Ctrl + C)
+
+* Added `cleanup()` handler using `signal`
+* On exit:
+
+  * Automatically **unblocks websites**
+  * Prevents leaving system in blocked state
+* Ensures **safe and clean shutdown**
+
+
+5.  Improved Error Handling
+
+* Centralized permission error handling (`admin_error()`)
+* Added:
+
+  * Graceful handling for `PermissionError`
+  * Catch-all for unexpected exceptions
+* Prevents crashes → shows user-friendly messages
+
+
+6.  Loop Optimization
+
+* Changed polling interval:
+
+  * From frequent checks → `time.sleep(60)`
+* Reduces unnecessary CPU usage and file operations
+
+
+7.  Terminal Output Improvements
+
+* Kept ANSI colors for:
+
+  * Errors (red)
+  * Success (green)
+  * Info (yellow/cyan)
+* Output is now **cleaner and more meaningful**
+
+
+
+* Added validation for:
+
+  * Hour inputs (0–23)
+* Falls back to defaults if input is invalid
+
+
+
+The script is now:
+
+* ✔ More **robust**
+* ✔ More **user-friendly**
+* ✔ More **efficient**
+* ✔ Safer to run (no leftover blocking)
+* ✔ Structured like a **real background service**
+
+
+
+> **State-driven system service (mini daemon)**
+
+Instead of blindly looping, it:
+
+* Detects changes
+* Reacts only when needed
+* Maintains consistent system state
+
+
 ## License
 
 This project is part of a public repository intended for educational and practical use.
