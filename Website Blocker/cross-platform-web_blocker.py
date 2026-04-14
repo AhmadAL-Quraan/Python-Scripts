@@ -4,14 +4,11 @@ import signal
 import sys
 from datetime import datetime
 
-# Flake8 and mypy check - clean code, type hints, and comments for clarity
-
 
 class WebsiteBlocker:
-    def __init__(self,
-                 websites: list,
-                 start_hour: int = 8,
-                 end_hour: int = 16) -> None:
+    def __init__(
+        self, websites: list, start_hour: int = 8, end_hour: int = 16
+    ) -> None:
         self.websites = websites
         self.start_hour = start_hour
         self.end_hour = end_hour
@@ -78,21 +75,28 @@ class WebsiteBlocker:
     def run(self) -> None:
         print("🚀 Website Blocker running...")
 
-        # Handle Ctrl + C safely -> Delete /etc/hosts or
-        # "C:\Windows\System32\drivers\etc\hosts" entries after
-
         signal.signal(signal.SIGINT, self.cleanup)
 
-        while True:
-            if self.is_working_hours():
-                print("🔒 Blocking websites...")
-                self.block_websites()
-            else:
-                print("🔓 Unblocking websites...")
-                print("⏰ Outside of working hours. Websites are accessible.")
-                self.unblock_websites()
+        last_state = None  # Track previous state
 
-            time.sleep(5)  # responsive check
+        while True:
+            current_state = self.is_working_hours()
+
+            # Only act if state changed
+            if current_state != last_state:
+                if current_state:
+                    print("🔒 Blocking websites...")
+                    self.block_websites()
+                else:
+                    print("🔓 Unblocking websites...")
+                    print(
+                        "⏰ Outside of working hours. Websites are accessible."
+                    )
+                    self.unblock_websites()
+
+                last_state = current_state  # update state
+
+            time.sleep(30)  # smaller interval is fine now
 
 
 # ----------------------------
@@ -129,10 +133,8 @@ def get_user_websites() -> list:
                     selected.append(site)
                     selected.append("www." + site)
         else:
-            print(
-                f"\n\033[91mInvalid option: {choice}\n\
-Please select from the list.\033[0m"
-            )
+            print(f"\n\033[91mInvalid option: {choice}\n\
+Please select from the list.\033[0m")
             return []
 
     return selected
