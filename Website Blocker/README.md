@@ -72,6 +72,9 @@ If invalid input is provided, default values (8–16) will be used.
 
 ## Example
 
+
+![example](pictures/prompt_asking.png)
+
 If you select:
 * facebook.com
 * youtube.com
@@ -104,6 +107,10 @@ The script will add entries like to the hosts file:
 * Logging system
 * Unit testing
 
+
+## Fixing 
+
+* Instead of the program print even if nothing changed, the program remembers its state and It only acts when something actually changes.
 
 ## License
 
