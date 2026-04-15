@@ -80,6 +80,7 @@ If you choose for example facebook.com to block, the script will add entries lik
 ```bash
 127.0.0.1 facebook.com
 127.0.0.1 www.facebook.com
+
 ```
 
 
@@ -88,6 +89,7 @@ If you choose for example facebook.com to block, the script will add entries lik
 ![sample_output when blocking in the right time](pictures/blocking_inside_working_hour.png)
 
 * When blocking hours finished -> unblocking websites
+
 ![sample when working hours is finished](pictures/outside_working_hours.png)
 
 
