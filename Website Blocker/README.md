@@ -75,6 +75,13 @@ If invalid input is provided, default values (8–16) will be used.
 
 ![example](pictures/prompt_asking.png)
 
+If you choose for example facebook.com to block, the script will add entries like to the hosts file:
+
+```bash
+127.0.0.1 facebook.com
+127.0.0.1 www.facebook.com
+
+
 * When running in blocking hours
 
 ![sample_output when blocking in the right time](pictures/blocking_inside_working_hour.png)
@@ -82,14 +89,6 @@ If invalid input is provided, default values (8–16) will be used.
 * When blocking hours finished -> unblocking websites
 ![sample when working hours is finished](pictures/outside_working_hours.png)
 
-If you select:
-* facebook.com
-* youtube.com
-
-The script will add entries like to the hosts file:
-```bash
-127.0.0.1 facebook.com
-127.0.0.1 www.facebook.com
 ```
 
 ## Important Notes
