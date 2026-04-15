@@ -74,7 +74,12 @@ If invalid input is provided, default values (8–16) will be used.
 
 
 ![example](pictures/prompt_asking.png)
+
+* When running in blocking hours
+
 ![sample_output when blocking in the right time](pictures/blocking_inside_working_hour.png)
+
+* When blocking hours finished -> unblocking websites
 ![sample when working hours is finished](pictures/outside_working_hours.png)
 
 If you select:
