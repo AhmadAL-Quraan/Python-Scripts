@@ -80,6 +80,7 @@ If you choose for example facebook.com to block, the script will add entries lik
 ```bash
 127.0.0.1 facebook.com
 127.0.0.1 www.facebook.com
+```
 
 
 * When running in blocking hours
@@ -89,7 +90,6 @@ If you choose for example facebook.com to block, the script will add entries lik
 * When blocking hours finished -> unblocking websites
 ![sample when working hours is finished](pictures/outside_working_hours.png)
 
-```
 
 ## Important Notes
 * The script must be run with administrator/root privileges.
