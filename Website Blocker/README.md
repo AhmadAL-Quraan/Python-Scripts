@@ -74,6 +74,8 @@ If invalid input is provided, default values (8–16) will be used.
 
 
 ![example](pictures/prompt_asking.png)
+![sample_output when blocking in the right time](pictures/blocking_inside_working_hour.png)
+![Outside working hours](pictures/outside_working_hours.png)
 
 If you select:
 * facebook.com
@@ -110,7 +112,7 @@ The script will add entries like to the hosts file:
 
 ## Fixing 
 
-* Instead of the program print even if nothing changed, the program remembers its state and It only acts when something actually changes.
+* Instead of the program print status even if nothing changed, the program remembers its state and only acts when something actually changes.
 
 
 
